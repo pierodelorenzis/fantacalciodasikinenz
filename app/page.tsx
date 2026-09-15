@@ -87,7 +87,7 @@ export default function Home() {
         <section className="stats" aria-label="La lega in numeri">
           <div>
             <Users />
-            <strong>08</strong>
+            <strong>8</strong>
             <span>
               PARTECIPANTI
               <br />
