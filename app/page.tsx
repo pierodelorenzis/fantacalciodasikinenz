@@ -51,12 +51,12 @@ export default function Home() {
           />
           <div className="hero-copy">
             <p className="eyebrow">
-              <span /> OTTO RIVALI. UNA SOLA LEGA.
+              OTTO RIVALI. UNA SOLA LEGA.
             </p>
             <h1 id="hero-title">
               <span>TU SEI RITARDATO</span>
               <span className="hero-bridge">MA QUESTO E'</span>
-              <em>FANTACALCIO DA SIKINENZ</em>
+              <em><span>FANTACALCIO</span>{' '}<span>DA SIKINENZ</span></em>
             </h1>
             <p className="hero-motto">
               Il calcio è una fede. Il fanta, una guerra.
