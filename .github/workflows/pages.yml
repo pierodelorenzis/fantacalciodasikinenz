@@ -34,6 +34,8 @@ jobs:
           FANTACALCIO_PASSWORD: ${{ secrets.FANTACALCIO_PASSWORD }}
           FANTACALCIO_LEAGUE_ALIAS: fantacalcio-da-sikinenz
           FANTACALCIO_COMPETITION_ID: '629232'
+      - name: Debug generated results
+        run: cat app/results.ts
       - run: npm run build:pages
         env:
           SITE_URL: ${{ steps.pages.outputs.base_url }}/
