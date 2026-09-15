@@ -1,5 +1,6 @@
 import { teams } from './teams';
 import { teamSlug } from './team-page';
+import { matchweeks, resultsLastUpdated } from './results';
 import {
   ArrowUpRight,
   ArrowDown,
@@ -33,6 +34,7 @@ export default function Home() {
         <nav aria-label="Navigazione principale">
           <a href="#lega">La lega</a>
           <a href="#partecipanti">Le squadre</a>
+          <a href="#risultati">Risultati</a>
           <a href="#montepremi">
             Montepremi <ArrowUpRight size={14} />
           </a>
@@ -182,9 +184,54 @@ export default function Home() {
             ))}
           </div>
         </section>
+        <section className="results section" id="risultati">
+          <div className="section-head">
+            <div>
+              <p className="eyebrow">03 — IL CAMPO PARLA</p>
+              <h2>
+                RISULTATI.
+                <br />
+                <em>GIORNATA PER GIORNATA.</em>
+              </h2>
+            </div>
+            <p>
+              Aggiornati automaticamente da Fantacalcio.
+              <br />
+              Ultimo sync: {resultsLastUpdated}.
+            </p>
+          </div>
+          {matchweeks.length > 0 ? (
+            <div className="results-grid">
+              {matchweeks.slice(0, 6).map(matchweek => (
+                <article className="matchweek-card" key={matchweek.matchweek}>
+                  <div className="matchweek-head">
+                    <strong>{matchweek.matchweek}</strong>
+                    <span>{matchweek.serieAWeek}</span>
+                  </div>
+                  <div className="match-list">
+                    {matchweek.matches.map(match => (
+                      <div className="match-row" key={`${matchweek.matchweek}-${match.home}-${match.away}`}>
+                        <span>{match.home}</span>
+                        <strong>
+                          {match.homeGoals && match.awayGoals ? `${match.homeGoals} - ${match.awayGoals}` : 'VS'}
+                        </strong>
+                        <span>{match.away}</span>
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="results-empty">
+              <h3>Risultati in arrivo</h3>
+              <p>La sincronizzazione automatica popolerà questa sezione appena troverà il calendario su Fantacalcio.</p>
+            </div>
+          )}
+        </section>
         <section className="prize section" id="montepremi">
           <div>
-            <p className="eyebrow">03 — LA POSTA IN GIOCO</p>
+            <p className="eyebrow">04 — LA POSTA IN GIOCO</p>
             <h2>
               PER LA GLORIA.
               <br />

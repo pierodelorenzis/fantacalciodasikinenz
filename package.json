@@ -9,6 +9,7 @@
     "dev": "vite --config vite.pages.config.ts",
     "build": "node scripts/build-pages.mjs",
     "start": "vite preview --config vite.pages.config.ts --outDir dist-pages",
+    "sync:results": "node scripts/sync-fantacalcio-results.mjs",
     "lint": "oxlint",
     "format": "oxfmt",
     "build:pages": "node scripts/build-pages.mjs"
@@ -47,6 +48,7 @@
     "oxfmt": "0.61.0",
     "oxlint": "1.76.0",
     "oxlint-tsgolint": "7.0.2001",
+    "playwright": "1.57.0",
     "tailwindcss": "4.2.1",
     "typescript": "5.9.3",
     "vite": "8.0.13",

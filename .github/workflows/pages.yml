@@ -2,6 +2,8 @@ name: Publish GitHub Pages
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: '15 6 * * *'
   workflow_dispatch:
 permissions:
   contents: read
@@ -11,6 +13,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      FANTACALCIO_USERNAME: ${{ secrets.FANTACALCIO_USERNAME }}
+      FANTACALCIO_PASSWORD: ${{ secrets.FANTACALCIO_PASSWORD }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
@@ -20,6 +25,15 @@ jobs:
       - uses: actions/configure-pages@v5
         id: pages
       - run: npm ci
+      - run: npx playwright install --with-deps chromium
+        if: ${{ env.FANTACALCIO_USERNAME != '' && env.FANTACALCIO_PASSWORD != '' }}
+      - run: npm run sync:results
+        if: ${{ env.FANTACALCIO_USERNAME != '' && env.FANTACALCIO_PASSWORD != '' }}
+        env:
+          FANTACALCIO_USERNAME: ${{ secrets.FANTACALCIO_USERNAME }}
+          FANTACALCIO_PASSWORD: ${{ secrets.FANTACALCIO_PASSWORD }}
+          FANTACALCIO_LEAGUE_ALIAS: fantacalcio-da-sikinenz
+          FANTACALCIO_COMPETITION_ID: '629232'
       - run: npm run build:pages
         env:
           SITE_URL: ${{ steps.pages.outputs.base_url }}/

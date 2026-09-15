@@ -350,6 +350,77 @@ h2 {
   color: #8f8b7f;
   margin: 0;
 }
+.results {
+  background: #191915;
+  border-top: 1px solid var(--border);
+}
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+.matchweek-card {
+  border: 1px solid var(--border);
+  padding: 22px;
+  background: #141411;
+}
+.matchweek-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: baseline;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #35342c;
+  margin-bottom: 10px;
+}
+.matchweek-head strong {
+  color: #d8bb77;
+  font-size: 13px;
+}
+.matchweek-head span {
+  color: #928e7f;
+  font-size: 11px;
+}
+.match-list {
+  display: grid;
+  gap: 6px;
+}
+.match-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  min-height: 34px;
+  font-size: 12px;
+  color: #d9d2bd;
+}
+.match-row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.match-row span:last-child {
+  text-align: right;
+}
+.match-row strong {
+  color: #d8bb77;
+  font-size: 11px;
+  min-width: 38px;
+  text-align: center;
+}
+.results-empty {
+  border: 1px solid var(--border);
+  padding: 26px;
+  color: #aaa79a;
+  background: #141411;
+}
+.results-empty h3 {
+  color: #d8bb77;
+  margin: 0 0 10px;
+}
+.results-empty p {
+  margin: 0;
+  line-height: 1.7;
+}
 .prize {
   background: #781e20;
   display: grid;
@@ -555,6 +626,16 @@ footer p {
   .prize {
     grid-template-columns: 1fr;
     gap: 35px;
+  }
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+  .matchweek-head {
+    display: block;
+  }
+  .matchweek-head span {
+    display: block;
+    margin-top: 6px;
   }
   .prize-value {
     border-left: 0;
