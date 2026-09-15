@@ -16,20 +16,35 @@ const fixturesUrl = `https://leghe.fantacalcio.it/${leagueAlias}/view/competitio
 const browser = await chromium.launch({ headless });
 const page = await browser.newPage({ locale: 'it-IT' });
 
+async function dismissCookieBanner() {
+  for (const selector of ['#pt-accept-all', '#pt-close']) {
+    const button = page.locator(selector);
+    if (await button.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await button.click({ force: true });
+      return;
+    }
+  }
+}
+
 try {
   await page.goto(fixturesUrl, { waitUntil: 'domcontentloaded' });
+  await dismissCookieBanner();
 
   if (page.url().includes('/login')) {
-    const cookieClose = page.locator('#pt-close');
-    if (await cookieClose.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await cookieClose.click();
-    }
+    const usernameInput = page.locator('input:not([type="hidden"])').first();
+    const passwordInput = page.locator('input[type="password"]').first();
 
-    await page.getByRole('textbox').first().fill(username);
-    await page.getByRole('textbox').nth(1).fill(password);
-    const loginButton = page.getByRole('button', { name: /login/i });
+    await usernameInput.fill(username);
+    await passwordInput.fill(password);
+    await dismissCookieBanner();
+
+    const loginButton = page.locator('button:has-text("LOGIN")').first();
     await loginButton.waitFor({ state: 'visible', timeout: 10000 });
-    await loginButton.click();
+    if (await loginButton.isEnabled().catch(() => false)) {
+      await loginButton.click();
+    } else {
+      await passwordInput.press('Enter');
+    }
   }
 
   await page.waitForURL(url => !url.href.includes('/login'), { timeout: 30000 });
