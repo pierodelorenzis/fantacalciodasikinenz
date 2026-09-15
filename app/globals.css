@@ -364,6 +364,9 @@ h2 {
   padding: 22px;
   background: #141411;
 }
+.matchweek-card-featured {
+  max-width: 780px;
+}
 .matchweek-head {
   display: flex;
   justify-content: space-between;
@@ -404,7 +407,7 @@ h2 {
 .match-row strong {
   color: #d8bb77;
   font-size: 11px;
-  min-width: 38px;
+  min-width: 72px;
   text-align: center;
 }
 .results-empty {

@@ -11,6 +11,10 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
+  const latestPlayedMatchweek = [...matchweeks]
+    .reverse()
+    .find(matchweek => matchweek.matches.some(match => match.played || (match.homeGoals && match.awayGoals)));
+
   return (
     <>
       <a className="skip-link" href="#contenuto">
@@ -200,32 +204,28 @@ export default function Home() {
               Ultimo sync: {resultsLastUpdated}.
             </p>
           </div>
-          {matchweeks.length > 0 ? (
-            <div className="results-grid">
-              {matchweeks.slice(0, 6).map(matchweek => (
-                <article className="matchweek-card" key={matchweek.matchweek}>
-                  <div className="matchweek-head">
-                    <strong>{matchweek.matchweek}</strong>
-                    <span>{matchweek.serieAWeek}</span>
+          {latestPlayedMatchweek ? (
+            <article className="matchweek-card matchweek-card-featured">
+              <div className="matchweek-head">
+                <strong>{latestPlayedMatchweek.matchweek}</strong>
+                <span>{latestPlayedMatchweek.serieAWeek}</span>
+              </div>
+              <div className="match-list">
+                {latestPlayedMatchweek.matches.map(match => (
+                  <div className="match-row" key={`${latestPlayedMatchweek.matchweek}-${match.home}-${match.away}`}>
+                    <span>{match.home}</span>
+                    <strong>
+                      {match.homeGoals && match.awayGoals ? `${match.homeGoals} - ${match.awayGoals}` : 'In calcolo'}
+                    </strong>
+                    <span>{match.away}</span>
                   </div>
-                  <div className="match-list">
-                    {matchweek.matches.map(match => (
-                      <div className="match-row" key={`${matchweek.matchweek}-${match.home}-${match.away}`}>
-                        <span>{match.home}</span>
-                        <strong>
-                          {match.homeGoals && match.awayGoals ? `${match.homeGoals} - ${match.awayGoals}` : 'VS'}
-                        </strong>
-                        <span>{match.away}</span>
-                      </div>
-                    ))}
-                  </div>
-                </article>
-              ))}
-            </div>
+                ))}
+              </div>
+            </article>
           ) : (
             <div className="results-empty">
               <h3>Risultati in arrivo</h3>
-              <p>La sincronizzazione automatica popolerà questa sezione appena troverà il calendario su Fantacalcio.</p>
+              <p>La sincronizzazione automatica popolerà questa sezione appena troverà una giornata giocata su Fantacalcio.</p>
             </div>
           )}
         </section>

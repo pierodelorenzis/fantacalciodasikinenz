@@ -5,6 +5,7 @@ export type MatchResult = {
   awayGoals?: string;
   homeScore?: string;
   awayScore?: string;
+  played?: boolean;
 };
 
 export type MatchweekResult = {

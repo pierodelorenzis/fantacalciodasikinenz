@@ -74,6 +74,15 @@ try {
     throw error;
   });
   await page.locator('view-matchweek-card').first().waitFor({ state: 'attached', timeout: 10000 });
+  await page.evaluate(async () => {
+    const scroller = document.querySelector('main') || document.scrollingElement || document.documentElement;
+    const maxScroll = scroller.scrollHeight - scroller.clientHeight;
+    for (let y = 0; y <= maxScroll; y += 600) {
+      scroller.scrollTo(0, y);
+      await new Promise(resolve => setTimeout(resolve, 250));
+    }
+    scroller.scrollTo(0, 0);
+  });
 
   const matchweeks = await page.locator('view-matchweek-card').evaluateAll(cards =>
     cards.map(card => {
@@ -82,12 +91,14 @@ try {
       const serieAWeek = header?.querySelector('small')?.textContent?.trim() || '';
 
       const matches = [...card.querySelectorAll('ui-match-row')].map(row => {
+        const rowText = row.textContent?.trim() || '';
         const teamNames = [...row.querySelectorAll('span')]
           .map(span => span.textContent?.trim() || '')
           .filter(text => text && text.toLowerCase() !== 'vs' && !/^\d+([,.]\d+)?$/.test(text));
         const numbers = [...row.querySelectorAll('span')]
           .map(span => span.textContent?.trim() || '')
           .filter(text => /^\d+([,.]\d+)?$/.test(text));
+        const scheduled = /\bvs\b/i.test(rowText);
 
         return {
           home: teamNames[0] || '',
@@ -96,12 +107,14 @@ try {
           awayGoals: numbers[1],
           homeScore: numbers[2],
           awayScore: numbers[3],
+          played: !scheduled || numbers.length >= 2,
         };
       }).filter(match => match.home && match.away && match.home !== match.away);
 
       return { matchweek, serieAWeek, matches };
     }).filter(matchweek => matchweek.matchweek && matchweek.matches.length)
   );
+  matchweeks.sort((a, b) => (parseInt(a.matchweek, 10) || 0) - (parseInt(b.matchweek, 10) || 0));
 
   const updatedAt = new Intl.DateTimeFormat('it-IT', {
     dateStyle: 'medium',
@@ -117,6 +130,7 @@ try {
     '  awayGoals?: string;',
     '  homeScore?: string;',
     '  awayScore?: string;',
+    '  played?: boolean;',
     '};',
     '',
     'export type MatchweekResult = {',
