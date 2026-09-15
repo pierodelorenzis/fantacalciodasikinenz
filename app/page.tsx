@@ -126,7 +126,7 @@ export default function Home() {
               insieme.
             </p>
             <span className="signature">
-              <Heart size={16} /> CUORE ROSSONERO. SPIRITO COMPETITIVO.
+              <Heart size={16} /> SPIRITO COMPETITIVO.
             </span>
           </div>
         </section>
