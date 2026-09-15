@@ -112,7 +112,11 @@ try {
       }).filter(match => match.home && match.away && match.home !== match.away);
 
       return { matchweek, serieAWeek, matches };
-    }).filter(matchweek => matchweek.matchweek && matchweek.matches.length)
+    }).filter(matchweek => (
+      matchweek.matchweek &&
+      matchweek.matches.length &&
+      (parseInt(matchweek.serieAWeek, 10) || 0) > 0
+    ))
   );
   matchweeks.sort((a, b) => (parseInt(a.matchweek, 10) || 0) - (parseInt(b.matchweek, 10) || 0));
 

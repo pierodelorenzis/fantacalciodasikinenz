@@ -12,6 +12,7 @@ import {
 
 export default function Home() {
   const latestPlayedMatchweek = [...matchweeks]
+    .filter(matchweek => (parseInt(matchweek.serieAWeek, 10) || 0) > 0)
     .reverse()
     .find(matchweek => matchweek.matches.some(match => match.played || (match.homeGoals && match.awayGoals)));
 
