@@ -41,11 +41,11 @@ export default function Home() {
       <main id="contenuto">
         <section className="hero" aria-labelledby="hero-title">
           <img
-            className="crest"
-            src="./logo.png"
-            alt="Stemma del Fantacalcio da Sikinenz"
-            width={280}
-            height={280}
+            className="crest hero-animation"
+            src="./pici.gif"
+            alt="Animazione del Fantacalcio da Sikinenz"
+            width={480}
+            height={270}
             fetchPriority="high"
           />
           <div className="hero-copy">

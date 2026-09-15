@@ -1123,3 +1123,13 @@ footer {
     }
   }
 }
+
+/* Preserve the full 16:9 landing animation. */
+.hero .hero-animation {
+  width: min(480px, 88vw);
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  clip-path: none;
+  object-fit: contain;
+}
