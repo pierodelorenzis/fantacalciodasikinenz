@@ -53,10 +53,19 @@ export default function Home() {
             <p className="eyebrow">
               OTTO RIVALI. UNA SOLA LEGA.
             </p>
-            <h1 id="hero-title">
-              <span>TU SEI RITARDATO</span>
-              <span className="hero-bridge">MA QUESTO E'</span>
-              <em><span>FANTACALCIO</span>{' '}<span>DA SIKINENZ</span></em>
+            <h1 id="hero-title" aria-label="TU SEI RITARDATO. MA QUESTO E' FANTACALCIO DA SIKINENZ">
+              <span className="desktop-title" aria-hidden="true">
+                <span>TU SEI RITARDATO</span>
+                <span className="hero-bridge">MA QUESTO E'</span>
+                <em>FANTACALCIO DA SIKINENZ</em>
+              </span>
+              <svg className="mobile-title" viewBox="0 0 1000 580" aria-hidden="true" focusable="false">
+                <defs><linearGradient id="headline-gold" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#b89354"/><stop offset="45%" stopColor="#f5dfaa"/><stop offset="100%" stopColor="#d7ae67"/></linearGradient></defs>
+                <text x="500" y="118" textAnchor="middle" textLength="960" lengthAdjust="spacingAndGlyphs" fontSize="132" fill="#f3efdf">TU SEI RITARDATO</text>
+                <text x="500" y="215" textAnchor="middle" fontSize="60" letterSpacing="5" fill="#d8d2cb">MA QUESTO E'</text>
+                <text x="500" y="390" textAnchor="middle" textLength="960" lengthAdjust="spacingAndGlyphs" fontSize="184" fill="url(#headline-gold)">FANTACALCIO</text>
+                <text x="500" y="560" textAnchor="middle" textLength="960" lengthAdjust="spacingAndGlyphs" fontSize="184" fill="url(#headline-gold)">DA SIKINENZ</text>
+              </svg>
             </h1>
             <p className="hero-motto">
               Il calcio è una fede. Il fanta, una guerra.

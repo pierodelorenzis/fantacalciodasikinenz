@@ -1151,3 +1151,12 @@ footer {
   .hero h1 > em > span {display:block;}
   .hero h1 > .hero-bridge {font-size:.55em;margin:12px 0;}
 }
+
+.hero h1 > .desktop-title > span, .hero h1 > .desktop-title > em {display:block;}
+.hero h1 .desktop-title .hero-bridge {font-size:.48em;line-height:1.5;letter-spacing:.08em;margin:12px 0 14px;color:#d8d2cb;}
+.mobile-title {display:none;}
+@media (max-width:640px) {
+ .hero h1 {width:100vw;max-width:none;position:relative;left:50%;transform:translateX(-50%);margin:0;line-height:1;}
+ .hero h1 > .desktop-title {display:none;}
+ .hero .mobile-title {display:block;width:100%;height:auto;overflow:visible;font-family:Impact,'Arial Narrow',Arial,sans-serif;font-weight:900;letter-spacing:0;}
+}
