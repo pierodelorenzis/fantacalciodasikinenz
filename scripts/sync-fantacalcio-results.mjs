@@ -27,12 +27,23 @@ try {
 
     await page.getByRole('textbox').first().fill(username);
     await page.getByRole('textbox').nth(1).fill(password);
-    await page.getByRole('button', { name: /login/i }).click();
+    const loginButton = page.getByRole('button', { name: /login/i });
+    await loginButton.waitFor({ state: 'visible', timeout: 10000 });
+    await loginButton.click();
   }
 
   await page.waitForURL(url => !url.href.includes('/login'), { timeout: 30000 });
-  await page.goto(fixturesUrl, { waitUntil: 'networkidle' });
-  await page.locator('view-matchweek-card').first().waitFor({ state: 'visible', timeout: 30000 });
+  await page.goto(fixturesUrl, { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => {
+    const text = document.body.innerText;
+    return /giornata/i.test(text) && /Galatina|Birrareal|Ajajax|Duce|HeneKurraska|Santa Caterina|PANCHINA LUNGA|SOLDI E PAURA/i.test(text);
+  }, null, { timeout: 45000 }).catch(async error => {
+    const bodyText = await page.locator('body').innerText({ timeout: 5000 }).catch(() => '');
+    console.error(`Unable to read fixtures from ${page.url()}`);
+    console.error(bodyText.slice(0, 2000));
+    throw error;
+  });
+  await page.locator('view-matchweek-card').first().waitFor({ state: 'attached', timeout: 10000 });
 
   const matchweeks = await page.locator('view-matchweek-card').evaluateAll(cards =>
     cards.map(card => {
