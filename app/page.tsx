@@ -53,9 +53,9 @@ export default function Home() {
               <span /> OTTO RIVALI. UNA SOLA LEGA.
             </p>
             <h1 id="hero-title">
-              FANTACALCIO
-              <br />
-              <em>DA SIKINENZ</em>
+              <span>TU SEI RITARDATO</span>
+              <span>MA QUESTO E'</span>
+              <em>POKER DA SIKINENZ</em>
             </h1>
             <p className="hero-motto">
               Il calcio è una fede. Il fanta, una guerra.
