@@ -17,20 +17,29 @@ const browser = await chromium.launch({ headless });
 const page = await browser.newPage({ locale: 'it-IT' });
 
 async function dismissCookieBanner() {
-  for (const selector of ['#pt-accept-all', '#pt-close']) {
-    const button = page.locator(selector);
-    if (await button.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await button.click({ force: true });
-      return;
+  const buttons = [
+    page.locator('#pt-close'),
+    page.locator('#pt-accept-all'),
+    page.getByRole('button', { name: /continua senza accettare/i }),
+    page.getByRole('button', { name: /accetta tutti/i }),
+  ];
+
+  for (const button of buttons) {
+    if (await button.first().isVisible({ timeout: 1500 }).catch(() => false)) {
+      await button.first().click({ force: true });
+      await page.waitForTimeout(500);
+      break;
     }
   }
 }
 
 try {
   await page.goto(fixturesUrl, { waitUntil: 'domcontentloaded' });
+  await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
   await dismissCookieBanner();
 
-  if (page.url().includes('/login')) {
+  const loginVisible = await page.locator('input[type="password"]').first().isVisible({ timeout: 5000 }).catch(() => false);
+  if (page.url().includes('/login') || loginVisible) {
     const usernameInput = page.locator('input:not([type="hidden"])').first();
     const passwordInput = page.locator('input[type="password"]').first();
 
@@ -44,6 +53,12 @@ try {
       await loginButton.click();
     } else {
       await passwordInput.press('Enter');
+    }
+
+    await page.waitForTimeout(3000);
+    if (page.url().includes('/login')) {
+      const bodyText = await page.locator('body').innerText({ timeout: 5000 }).catch(() => '');
+      throw new Error(`Fantacalcio login failed or was blocked. Current page says: ${bodyText.slice(0, 1000)}`);
     }
   }
 
