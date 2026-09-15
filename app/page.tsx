@@ -1,4 +1,5 @@
 import { teams } from './teams';
+import { teamSlug } from './team-page';
 import {
   ArrowUpRight,
   ArrowDown,
@@ -54,8 +55,8 @@ export default function Home() {
             </p>
             <h1 id="hero-title">
               <span>TU SEI RITARDATO</span>
-              <span>MA QUESTO E'</span>
-              <em>POKER DA SIKINENZ</em>
+              <span className="hero-bridge">MA QUESTO E'</span>
+              <em>FANTACALCIO DA SIKINENZ</em>
             </h1>
             <p className="hero-motto">
               Il calcio è una fede. Il fanta, una guerra.
@@ -154,10 +155,8 @@ export default function Home() {
                 </span>
                 <a
                   className="team-logo-link"
-                  href={`./teams/${team.logo}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={`Apri il logo di ${team.name}`}
+                  href={`./${teamSlug(team.logo)}.html`}
+                  aria-label={`Scopri ${team.name}`}
                 >
                   <img
                     className="team-logo"
@@ -168,7 +167,8 @@ export default function Home() {
                     loading="lazy"
                   />
                 </a>
-                <h3>{team.name}</h3>
+                <h3><a href={`./${teamSlug(team.logo)}.html`}>{team.name}</a></h3>
+                <a className="team-roster-link" href={`./${teamSlug(team.logo)}.html`}>Scopri la squadra <ArrowUpRight size={14}/></a>
               </article>
             ))}
           </div>

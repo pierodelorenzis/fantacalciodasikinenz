@@ -1123,6 +1123,7 @@ footer {
     }
   }
 }
+.team-roster-link{display:inline-flex;align-items:center;gap:8px;color:#d8bb77;font-size:11px;margin-top:16px}.player .team-roster-link svg{margin:0}.team-page{max-width:1100px;margin:auto;padding:54px 6% 75px;background:radial-gradient(ellipse at 20% 10%,#8e26342e,transparent 60%),radial-gradient(ellipse at 100% 40%,#b4823722,transparent 60%)}.team-heading{text-align:center;margin-bottom:50px}.team-heading .eyebrow{justify-content:center}.team-heading>img{display:block;width:200px;height:200px;object-fit:contain;margin:0 auto 30px}.team-heading h1{font-size:clamp(35px,6vw,72px);line-height:1.08;overflow-wrap:anywhere}.team-heading>p:last-child{color:#b4acb4;margin-top:22px}.roster-panel{padding:35px;border:1px solid #d9bd8e26;border-radius:18px;background:linear-gradient(130deg,#21151c99,#14121acc)}.roster-panel .section-head{align-items:center}.roster-panel svg{color:#d8bb77}.roster-empty{padding:20px 0 30px;border-top:1px solid #ffffff12}.roster-empty h3{font-size:20px}.roster-empty p{color:#b4acb4;line-height:1.7;max-width:600px}.roster-empty small{display:block;color:#9d949c;margin-top:14px;font-size:11px}.team-navigation{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}.team-navigation a{border:1px solid #ffffff18;border-radius:8px;padding:11px 15px;font-size:12px;color:#bdb4bc}.team-navigation a:hover,.team-navigation a[aria-current]{border-color:#d8bb7766;color:#e5c68b;background:#d8bb7710}@media(max-width:640px){.roster-panel{padding:24px}.team-heading>img{width:155px;height:155px}.team-page{padding-top:35px}}
 
 /* Preserve the full 16:9 landing animation. */
 .hero .hero-animation {
@@ -1140,3 +1141,5 @@ footer {
 .hero .hero-animation {box-shadow:none;filter:none;border-radius:0;}
 .hero h1 {font-size:clamp(22px,5.4vw,74px);line-height:1.08;letter-spacing:-.5px;}
 .hero h1 > span, .hero h1 > em {display:block;white-space:nowrap;}
+
+.hero h1 > .hero-bridge {font-size:.48em;line-height:1.5;letter-spacing:.08em;margin:12px 0 14px;color:#d8d2cb;}

@@ -31,6 +31,20 @@ try {
   const title = 'Fantacalcio da Sikinenz | Otto rivali. Una sola lega.';
   const description = '8 squadre, 400 € di montepremi e una passione che ci unisce. Scopri il Fantacalcio da Sikinenz.';
   await writeFile(resolve(output, 'index.html'), `<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${title}</title><meta name="description" content="${description}"><link rel="canonical" href="${escape(origin.href)}"><link rel="icon" type="image/png" href="./logo.png"><link rel="stylesheet" href="./style.css"><meta property="og:type" content="website"><meta property="og:locale" content="it_IT"><meta property="og:title" content="${title}"><meta property="og:description" content="${description}"><meta property="og:url" content="${escape(origin.href)}"><meta property="og:image" content="${escape(new URL('og.png',origin).href)}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${title}"><meta name="twitter:description" content="${description}"><meta name="twitter:image" content="${escape(new URL('og.png',origin).href)}"></head><body>${body}</body></html>`);
+  const { default: TeamPage, teamSlug } = await server.ssrLoadModule('/app/team-page.tsx');
+  const shell = await readFile(resolve(output, 'index.html'), 'utf8');
+  for (const team of teams) {
+    const slug = teamSlug(team.logo);
+    const teamTitle = `${team.name} | Fantacalcio da Sikinenz`;
+    const teamDescription = `La pagina di ${team.name}: squadra e rosa del Fantacalcio da Sikinenz.`;
+    const teamUrl = new URL(`${slug}.html`, origin).href;
+    const teamImage = new URL(`teams/${team.logo}`, origin).href;
+    let html = shell.replace(/<body>[\s\S]*<\/body>/, () => `<body>${renderToStaticMarkup(createElement(TeamPage, {team}))}</body>`);
+    html = html.replaceAll(title, escape(teamTitle)).replaceAll(description, escape(teamDescription));
+    html = html.replaceAll(`"${escape(origin.href)}"`, `"${escape(teamUrl)}"`);
+    html = html.replaceAll(escape(new URL('og.png',origin).href), escape(teamImage));
+    await writeFile(resolve(output, `${slug}.html`), html);
+  }
   await writeFile(resolve(output, '.nojekyll'), '');
   console.log(`GitHub Pages: ${output} — ${teams.length} team logos, static HTML and CSS.`);
 } finally {
