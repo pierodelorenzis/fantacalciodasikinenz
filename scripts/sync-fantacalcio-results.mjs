@@ -98,7 +98,7 @@ try {
         const numbers = [...row.querySelectorAll('span')]
           .map(span => span.textContent?.trim() || '')
           .filter(text => /^\d+([,.]\d+)?$/.test(text));
-        const scheduled = /\bvs\b/i.test(rowText);
+        const hasResultMarker = Boolean(row.querySelector('[nztype="mi:calculate"], [aria-label="mi:calculate"]'));
 
         return {
           home: teamNames[0] || '',
@@ -107,7 +107,7 @@ try {
           awayGoals: numbers[1],
           homeScore: numbers[2],
           awayScore: numbers[3],
-          played: !scheduled || numbers.length >= 2,
+          played: hasResultMarker || numbers.length >= 2,
         };
       }).filter(match => match.home && match.away && match.home !== match.away);
 
