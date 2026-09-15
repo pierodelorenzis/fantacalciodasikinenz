@@ -1,6 +1,6 @@
 import { teams } from './teams';
 import { teamSlug } from './team-page';
-import { matchweeks, resultsLastUpdated } from './results';
+import { matchweeks, resultsLastUpdated, standings } from './results';
 import {
   ArrowUpRight,
   ArrowDown,
@@ -14,7 +14,7 @@ export default function Home() {
   const latestPlayedMatchweek = [...matchweeks]
     .filter(matchweek => (parseInt(matchweek.serieAWeek, 10) || 0) > 0)
     .reverse()
-    .find(matchweek => matchweek.matches.some(match => match.played || (match.homeGoals && match.awayGoals)));
+    .find(matchweek => matchweek.matches.some(match => match.played));
 
   return (
     <>
@@ -40,6 +40,7 @@ export default function Home() {
           <a href="#lega">La lega</a>
           <a href="#partecipanti">Le squadre</a>
           <a href="#risultati">Risultati</a>
+          <a href="#classifica">Classifica</a>
           <a href="#montepremi">
             Montepremi <ArrowUpRight size={14} />
           </a>
@@ -212,11 +213,11 @@ export default function Home() {
                 <span>{latestPlayedMatchweek.serieAWeek}</span>
               </div>
               <div className="match-list">
-                {latestPlayedMatchweek.matches.map(match => (
+                {latestPlayedMatchweek.matches.filter(match => match.played).map(match => (
                   <div className="match-row" key={`${latestPlayedMatchweek.matchweek}-${match.home}-${match.away}`}>
                     <span>{match.home}</span>
                     <strong>
-                      {match.homeGoals && match.awayGoals ? `${match.homeGoals} - ${match.awayGoals}` : 'In calcolo'}
+                      {match.homeGoals && match.awayGoals ? `${match.homeGoals} - ${match.awayGoals}` : '—'}
                     </strong>
                     <span>{match.away}</span>
                   </div>
@@ -230,9 +231,70 @@ export default function Home() {
             </div>
           )}
         </section>
+        <section className="standings section" id="classifica">
+          <div className="section-head">
+            <div>
+              <p className="eyebrow">04 — LA CLASSIFICA</p>
+              <h2>
+                PUNTI.
+                <br />
+                <em>E FANTAMEDIA.</em>
+              </h2>
+            </div>
+            <p>
+              Aggiornata automaticamente da Fantacalcio.
+              <br />
+              Dati allineati all’ultimo sync.
+            </p>
+          </div>
+          {standings.length ? (
+            <div className="standings-card" role="region" aria-label="Classifica Fantacalcio" tabIndex={0}>
+              <table className="standings-table">
+                <thead>
+                  <tr>
+                    <th>Pos</th>
+                    <th>Squadra</th>
+                    <th>G</th>
+                    <th>V</th>
+                    <th>N</th>
+                    <th>P</th>
+                    <th>DR</th>
+                    <th>Pt</th>
+                    <th>Pt tot</th>
+                    <th>FM</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {standings.map(team => (
+                    <tr key={`${team.position}-${team.team}`}>
+                      <td>{team.position}</td>
+                      <td>
+                        <strong>{team.team}</strong>
+                        {team.manager ? <span>{team.manager}</span> : null}
+                      </td>
+                      <td>{team.played}</td>
+                      <td>{team.wins}</td>
+                      <td>{team.draws}</td>
+                      <td>{team.losses}</td>
+                      <td>{team.goalDifference}</td>
+                      <td><b>{team.points}</b></td>
+                      <td>{team.totalScore}</td>
+                      <td>{team.averageScore}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="results-empty">
+              <h3>Classifica in arrivo</h3>
+              <p>La sincronizzazione automatica popolerà questa sezione appena riuscirà a leggere la classifica su Fantacalcio.</p>
+            </div>
+          )}
+        </section>
         <section className="prize section" id="montepremi">
           <div>
-            <p className="eyebrow">04 — LA POSTA IN GIOCO</p>
+            <p className="eyebrow">05 — LA POSTA IN GIOCO</p>
             <h2>
               PER LA GLORIA.
               <br />

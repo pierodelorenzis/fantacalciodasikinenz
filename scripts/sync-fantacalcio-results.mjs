@@ -13,6 +13,7 @@ if (!username || !password) {
 }
 
 const fixturesUrl = `https://leghe.fantacalcio.it/${leagueAlias}/view/competition/${competitionId}/fixtures?view=calendar`;
+const standingsUrl = `https://leghe.fantacalcio.it/${leagueAlias}/view/competition/${competitionId}/standings`;
 const browser = await chromium.launch({ headless });
 const page = await browser.newPage({ locale: 'it-IT' });
 
@@ -94,20 +95,28 @@ try {
         const rowText = row.textContent?.trim() || '';
         const teamNames = [...row.querySelectorAll('span')]
           .map(span => span.textContent?.trim() || '')
-          .filter(text => text && text.toLowerCase() !== 'vs' && !/^\d+([,.]\d+)?$/.test(text));
-        const numbers = [...row.querySelectorAll('span')]
+          .filter(text => (
+            text &&
+            text.toLowerCase() !== 'vs' &&
+            !/^\d+([,.]\d+)?$/.test(text) &&
+            !/^\d+(?:[,.]\d+)?\s*-\s*\d+(?:[,.]\d+)?$/.test(text)
+          ));
+        const scoreTexts = [...row.querySelectorAll('span')]
           .map(span => span.textContent?.trim() || '')
-          .filter(text => /^\d+([,.]\d+)?$/.test(text));
-        const hasResultMarker = Boolean(row.querySelector('[nztype="mi:calculate"], [aria-label="mi:calculate"]'));
+          .filter(text => /^\d+(?:[,.]\d+)?\s*-\s*\d+(?:[,.]\d+)?$/.test(text));
+        const [homeGoals, awayGoals] = (scoreTexts[0] || '').split('-').map(value => value?.trim()).filter(Boolean);
+        const [homeScore, awayScore] = (scoreTexts[1] || '').split('-').map(value => value?.trim()).filter(Boolean);
+        const calculating = Boolean(row.querySelector('[nztype="mi:calculate"], [aria-label="mi:calculate"]'));
 
         return {
           home: teamNames[0] || '',
           away: teamNames.at(-1) || '',
-          homeGoals: numbers[0],
-          awayGoals: numbers[1],
-          homeScore: numbers[2],
-          awayScore: numbers[3],
-          played: hasResultMarker || numbers.length >= 2,
+          homeGoals,
+          awayGoals,
+          homeScore,
+          awayScore,
+          played: Boolean(homeGoals && awayGoals),
+          calculating,
         };
       }).filter(match => match.home && match.away && match.home !== match.away);
 
@@ -119,6 +128,63 @@ try {
     ))
   );
   matchweeks.sort((a, b) => (parseInt(a.matchweek, 10) || 0) - (parseInt(b.matchweek, 10) || 0));
+
+  await page.goto(standingsUrl, { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => {
+    const text = document.body.innerText;
+    return /pos\s+Squadra\s+g\s+v\s+n\s+p/i.test(text) && /Ajajax|Duce|Birrareal|Galatina|Santa Caterina/i.test(text);
+  }, null, { timeout: 45000 }).catch(async error => {
+    const bodyText = await page.locator('body').innerText({ timeout: 5000 }).catch(() => '');
+    console.error(`Unable to read standings from ${page.url()}`);
+    console.error(bodyText.slice(0, 2000));
+    throw error;
+  });
+
+  const standings = await page.locator('body').evaluate(body => {
+    const lines = (body.innerText || '').split(/[\n\t]+/).map(line => line.trim()).filter(Boolean);
+    const headerIndex = lines.findIndex((line, index) => line.toLowerCase() === 'pos' && lines[index + 1] === 'Squadra');
+    const endIndex = lines.findIndex(line => /^criteri di ordinamento:/i.test(line));
+    if (headerIndex < 0 || endIndex < 0 || endIndex <= headerIndex) {
+      return [];
+    }
+
+    const rows = [];
+    const data = lines.slice(headerIndex + 13, endIndex);
+    for (let i = 0; i < data.length;) {
+      const position = Number(data[i]);
+      if (!Number.isInteger(position)) {
+        i += 1;
+        continue;
+      }
+
+      const team = data[i + 1] || '';
+      const manager = data[i + 2] || '';
+      const stats = data.slice(i + 3, i + 14);
+      if (!team || stats.length < 11) {
+        i += 1;
+        continue;
+      }
+
+      rows.push({
+        position,
+        team,
+        manager,
+        played: stats[0],
+        wins: stats[1],
+        draws: stats[2],
+        losses: stats[3],
+        goalsFor: stats[4],
+        goalsAgainst: stats[5],
+        goalDifference: stats[6],
+        points: stats[7],
+        totalScore: stats[8],
+        averageScore: stats[9],
+      });
+      i += 14;
+    }
+
+    return rows;
+  });
 
   const updatedAt = new Intl.DateTimeFormat('it-IT', {
     dateStyle: 'medium',
@@ -135,6 +201,7 @@ try {
     '  homeScore?: string;',
     '  awayScore?: string;',
     '  played?: boolean;',
+    '  calculating?: boolean;',
     '};',
     '',
     'export type MatchweekResult = {',
@@ -143,14 +210,32 @@ try {
     '  matches: MatchResult[];',
     '};',
     '',
+    'export type Standing = {',
+    '  position: number;',
+    '  team: string;',
+    '  manager?: string;',
+    '  played?: string;',
+    '  wins?: string;',
+    '  draws?: string;',
+    '  losses?: string;',
+    '  goalsFor?: string;',
+    '  goalsAgainst?: string;',
+    '  goalDifference?: string;',
+    '  points?: string;',
+    '  totalScore?: string;',
+    '  averageScore?: string;',
+    '};',
+    '',
     `export const resultsLastUpdated = ${JSON.stringify(updatedAt)};`,
     '',
     `export const matchweeks: MatchweekResult[] = ${JSON.stringify(matchweeks, null, 2)};`,
     '',
+    `export const standings: Standing[] = ${JSON.stringify(standings, null, 2)};`,
+    '',
   ].join('\n');
 
   await writeFile(output, source);
-  console.log(`Synced ${matchweeks.length} matchweeks to ${output}`);
+  console.log(`Synced ${matchweeks.length} matchweeks and ${standings.length} standings rows to ${output}`);
 } finally {
   await browser.close();
 }
